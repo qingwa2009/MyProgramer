@@ -20,7 +20,7 @@ PROJECT =
 COMPILER = "Arduino AVR (Proteus)"
 TARGET = Debug
 SHELL = C:\Windows\system32\cmd.exe
-BUILD_DIR = ./debug
+BUILD_DIR = debug
 
 BOARD = pro328
 MCU = ATmega328P
@@ -33,7 +33,7 @@ OBJS = $(addprefix $(BUILD_DIR)/,$(SRCS:.c=.o))
 THIS_DIR = $(abspath .)
 CURR_FOLDER_NAME =$(lastword $(notdir $(THIS_DIR)))
 
-MYLIB_PATH = ./mylib
+MYLIB_PATH = mylib
 MYLIB_OUT_PATH = $(BUILD_DIR)/mylib
 MYLIB_OUT_PATH_RELATIVE_FROM_MYLIB = ../../$(CURR_FOLDER_NAME)/$(MYLIB_OUT_PATH)
 
