@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "../mylib/MyPin.h"
 #include "myCC2541.h"
+#include "../mylib/SerialC.h"
 
 #define PIN_DC 5
 #define PIN_DD 6
@@ -402,23 +403,19 @@ bool readCodeMem2(uint16_t addr, uint8_t *buf, uint16_t len)
 {
 
     uint8_t bank = addr / 0x2000; /*addr/(32*1024>>2)*/
-    uint16_t addrEnd = addr + (len >> 2) - 1;
+    uint16_t bank2 = (addr + (len >> 2) - 1) / 0x2000;
     addr <<= 2;
     addr &= 0x7FFF;
-    // return addrEnd > 0x7FFF;
-    if (addrEnd / 0x2000 != bank)
+    if (bank2 != bank)
     {
         /*读取的数据跨了2个bank*/
-        uint16_t len1 = (uint8_t)((addrEnd - 0x7FFF) * 4);
-        uint16_t len0 = len - len1;
+        uint16_t len0 = (uint16_t)0x8000 - addr;
+        uint16_t len1 = len - len0;
         readCodeMem(addr, bank, buf, len0);
-        addrEnd <<= 2;
-        addrEnd &= 0x7FFF;
         return readCodeMem(0, bank + 1, &buf[len0], len1);
     }
     else
     {
-
         return readCodeMem(addr, bank, buf, len);
     }
 }

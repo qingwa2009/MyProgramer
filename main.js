@@ -70,6 +70,7 @@ com.on("data", (data) => {
                     console.log(s);
                     cmdInd++;
                 } else if (!s.startsWith("ok")) {
+                    com.write("/r\r\n");
                     console.log("");
                     console.log(">>");
                     console.log(s);
@@ -86,7 +87,7 @@ com.on("data", (data) => {
                         rowInd++;
                         renderProgressBar(rowInd, rowCount, "programing: ");
                     } else {
-                        com.write("/r");
+                        com.write("/r\r\n");
                         cmdInd = cmdList.length
                         console.log("");
                         console.log("program finish!");
@@ -127,7 +128,7 @@ com.on("data", (data) => {
                             com.write(binBuf);
                             renderProgressBar(fileBufInd, fileBuf.length, "programing: ");
                         } else {
-                            com.write("/r");
+                            com.write("/r\r\n");
                             cmdInd = cmdList.length
                             console.log("");
                             console.log("program finish!");

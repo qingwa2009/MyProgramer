@@ -673,12 +673,16 @@ uint8_t programing(uint32_t addr, uint8_t *buf512, uint16_t len)
     {
         if (buf[i + offset] != buf512[i])
         {
-            Serial.print("addr ");
+            Serial.print(F("addr "));
             Serial.print(addr + i + offset, HEX);
-            Serial.print(" :");
+            Serial.print(F(" : "));
             Serial.print(buf512[i], HEX);
-            Serial.print(" => ");
-            Serial.print(buf[i + offset], HEX);
+            Serial.print(F(" => "));
+            Serial.println(buf[i + offset], HEX);
+            // for (uint16_t j = 0; j < i + 6; j++)
+            // {
+            //     Serial.println(buf[j + offset], HEX);
+            // }
             return ERR_PROGRAM_READ_BACK_UNMATCH;
         }
     }
