@@ -40,7 +40,7 @@ com.addListener("drain", () => {
 
 const cmdList = [
     // "/h\r\n",
-    "/d\r\n",
+    "/d\r\n",/*死活烧不了的时候可以用串口调试助手执行/d /ch大多数情况就可以烧了 */
     "/gi\r\n",
     isBin ? "/pb\r\n" : "/p\r\n",
 ];
@@ -48,6 +48,8 @@ const cmdList = [
 let cmdInd = 0;
 let recvBuf = [];
 let rowInd = 0;
+
+
 /*com 打开时会触发uno重置 */
 com.on("data", (data) => {
     for (let i = 0; i < data.length; i++) {
@@ -56,6 +58,9 @@ com.on("data", (data) => {
             recvBuf.push(String.fromCharCode(b));
         } else {
             const s = recvBuf.join('');
+            if (s === '') {
+                continue;
+            }
             recvBuf = [];
             if (cmdInd < cmdList.length) {
                 console.log(">>", s);
