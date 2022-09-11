@@ -21,6 +21,8 @@
 #define ERR_PROGRAM_READ_BACK_UNMATCH 7
 #define ERR_PROGRAM_ADDR_INVALID 8
 #define ERR_PROGRAM_LEN_INVALID 9
+#define ERR_PROGRAM_WRITE_TIMEOUT 10
+#define ERR_PROGRAM_UNSUPPORTED 11
 
 #define HINDEX(x) (unsigned char)(x - 'a')
 
@@ -38,11 +40,13 @@ typedef struct
 /*必须实现该接口*/
 void handleHelp();
 /*必须实现该接口 编程中调用，返回错误码，不要在里面打印任何信息*/
-uint8_t programing(uint32_t addr, uint8_t *buf512, uint16_t len);
-/*必须实现该接口 编程中调用，返回错误码，不要在里面打印任何信息 node: the buf size is 512*/
+uint8_t programing(uint32_t addr, uint8_t *buf512, uint16_t len, bool isEOF);
+/*必须实现该接口 编程中调用，返回错误码，不要在里面打印任何信息*/
+uint8_t programingEEPROM(uint32_t addr, uint8_t *buf512, uint16_t len, bool isEOF);
+/*必须实现该接口 编程中调用，返回错误码，不要在里面打印任何信息 note: the buf size is 512*/
 uint8_t programingBin(uint32_t addr, uint8_t *buf);
 /*必须实现该接口 /p进入编程模式时调用*/
-bool beforeProgram();
+bool beforeProgram(bool mustEraseChip);
 /*必须实现该接口 编程成功执行最后一条结束语句后调用*/
 void afterProgram();
 

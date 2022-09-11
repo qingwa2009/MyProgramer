@@ -94,7 +94,6 @@ void handleHelp()
     Serial.println(F("/bcn     clear hardware breakpoint: n:0~3 "));
     Serial.println(F("/fe     flash erase chip"));
     Serial.println(F("/fr     read all flash"));
-    Serial.println(F("/q      enable or disalbe UNO USART Transmitter"));
 }
 
 void _readChipIdAndVer()
@@ -568,22 +567,6 @@ void handleFlashControl(char *buf, uint8_t len)
     }
 }
 
-void handleTurnUSARTTransmitOnOrOFF(char *buf, uint8_t len)
-{
-    if (bit_is_set(UCSR0B, TXEN0))
-    {
-        Serial.println(F("USART transmit disable!"));
-        delay(10);
-        bitClear(UCSR0B, TXEN0);
-    }
-    else
-    {
-        bitSet(UCSR0B, TXEN0);
-        delay(10);
-        Serial.println(F("USART transmit enable!"));
-    }
-}
-
 /*退出debug模式，进入正常模式*/
 void exitDebugMode(char *buf, uint8_t len)
 {
@@ -613,13 +596,12 @@ void myprogramer_setup()
     handlers[HINDEX('e')] = handleExecInstr;
     handlers[HINDEX('b')] = handleSetHWBreakPoint;
     handlers[HINDEX('f')] = handleFlashControl;
-    handlers[HINDEX('q')] = handleTurnUSARTTransmitOnOrOFF;
 
     Serial.println(F("you should input /d to enter debug mode first!"));
     Serial.println(F("----->Notice: 8051 mcu is 'big endian'!<-----"));
 }
 
-bool beforeProgram()
+bool beforeProgram(bool mustEraseChip)
 {
 
     Serial.println(F("before program!"));
@@ -644,7 +626,7 @@ bool beforeProgram()
     return 1;
 }
 
-uint8_t programing(uint32_t addr, uint8_t *buf512, uint16_t len)
+uint8_t programing(uint32_t addr, uint8_t *buf512, uint16_t len, bool isEOF)
 {
     uint16_t totalLen = len;
     uint8_t buf[512 + 6];
@@ -690,6 +672,11 @@ uint8_t programing(uint32_t addr, uint8_t *buf512, uint16_t len)
     return ERR_OK;
 }
 
+uint8_t programingEEPROM(uint32_t addr, uint8_t *buf512, uint16_t len, bool isEOF)
+{
+    return ERR_PROGRAM_UNSUPPORTED;
+}
+
 uint8_t programingBin(uint32_t addr, uint8_t *buf)
 {
     uint16_t flashAddr = (uint16_t)(addr >> 2);
@@ -717,4 +704,5 @@ uint8_t programingBin(uint32_t addr, uint8_t *buf)
 void afterProgram()
 {
     Serial.println(F("after program!"));
+    exitDebugMode(0, 0);
 }

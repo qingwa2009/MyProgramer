@@ -64,22 +64,34 @@ void enterCmdMode()
 
 void enterProgramMode(char *buf, uint8_t len)
 {
+    switch (buf[2])
+    {
+    case 'b':
+        mode = MODE_WRITING_PROGRAM_BIN;
+        Serial.println(F("program mode(BIN):"));
+        break;
+    case 'e':
+        mode = MODE_WRITING_EEPROM;
+        Serial.println(F("program mode(EEPROM):"));
+        break;
+    default:
+        mode = MODE_WRITING_PROGRAM_HEX;
+        Serial.println(F("program mode(HEX):"));
+        break;
+    }
 
-    if (!beforeProgram())
+    bool mustEraseChip = mode != MODE_WRITING_EEPROM; /*烧eeprom不清空芯片*/
+    if (!beforeProgram(mustEraseChip))
     {
         Serial.println(F("enter program mode failed!"));
+        mode = MODE_CMD;
         return;
     }
 
-    mode = buf[2] == 'b' ? MODE_WRITING_PROGRAM_BIN : MODE_WRITING_PROGRAM_HEX;
     baseAddr = 0;
     nextProgramStartAddr = 0;
     buf512Ind = 0;
     errCode = ERR_OK;
-    if (mode == MODE_WRITING_PROGRAM_HEX)
-        Serial.println(F("program mode(HEX):"));
-    else
-        Serial.println(F("program mode(BIN):"));
 }
 
 bool parseHexFileRow(char *buf, uint8_t offset, uint8_t len, HexRow *hexRow)
@@ -184,7 +196,7 @@ uint8_t mergeHexRowAndProgram(uint32_t baseAddr, HexRow *hexRow)
     }
     else
     {
-        errcode = programing(nextProgramStartAddr - buf512Ind, buf512, buf512Ind);
+        errcode = mode == MODE_WRITING_PROGRAM_HEX ? programing(nextProgramStartAddr - buf512Ind, buf512, buf512Ind, hexRow->type == TT_EOF) : programingEEPROM(nextProgramStartAddr - buf512Ind, buf512, buf512Ind, hexRow->type == TT_EOF);
         nextProgramStartAddr = flashAddr + hexRow->dataLen;
         buf512Ind = 0;
     }
@@ -240,7 +252,11 @@ uint8_t execHexFileRow(HexRow *hexRow)
 void _handleHelp(char *buf, uint8_t len)
 {
     Serial.println(F("-------help--------"));
+    Serial.println(F("/q      enable or disalbe UNO USART Transmitter"));
     Serial.println(F("/p      enter program mode, you can send hex file row by row, "
+                     "if program success it will return 'ok', "
+                     "otherwise, it returns err msg!"));
+    Serial.println(F("/pe      enter program EEPROM mode, you can send hex file row by row, "
                      "if program success it will return 'ok', "
                      "otherwise, it returns err msg!"));
     Serial.println(F("/pb     enter program mode, you can send bin file '512bytes data + 2byte2 checksum', if len=0 it finish program, "
@@ -339,11 +355,28 @@ void programBinFileMode()
     enterCmdMode();
 }
 
+void handleTurnUSARTTransmitOnOrOFF(char *buf, uint8_t len)
+{
+    if (bit_is_set(UCSR0B, TXEN0))
+    {
+        Serial.println(F("USART transmit disable!"));
+        delay(10);
+        bitClear(UCSR0B, TXEN0);
+    }
+    else
+    {
+        bitSet(UCSR0B, TXEN0);
+        delay(10);
+        Serial.println(F("USART transmit enable!"));
+    }
+}
+
 void myprogramer_start()
 {
     handlers[HINDEX('h')] = _handleHelp;
     Serial.println(F("my programer start, input /h to get help!"));
     handlers[HINDEX('p')] = enterProgramMode;
+    handlers[HINDEX('q')] = handleTurnUSARTTransmitOnOrOFF;
 
     enterCmdMode();
     RESP_END;
@@ -380,6 +413,7 @@ void myprogramer_start()
                 }
                 break;
             case MODE_WRITING_PROGRAM_HEX:
+            case MODE_WRITING_EEPROM:
                 _handleProgramHex(buf, len);
                 break;
             default:

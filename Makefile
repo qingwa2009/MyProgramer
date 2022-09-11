@@ -3,8 +3,9 @@
 ###############################################################################
 ## General options
 
-#目前仅实现了cc2541的编程功能，atmega328还没写
-TARGET_MCU_FILE = mcu_cc2541.cpp
+#实现了cc2541跟atmega328的编程功能
+# TARGET_MCU_FILE = mcu_cc2541.cpp
+TARGET_MCU_FILE = mcu_atmega328.cpp
 
 #必要的路径，必须短路径名，不然有空格会出错
 ARDUINO_PATH = "D:\PROGRA~1\Arduino"
@@ -85,7 +86,7 @@ upload:
 Debug: $(BUILD_DIR)/Debug.elf 
 	avr-size "$(BUILD_DIR)/Debug.ELF"
 
-$(BUILD_DIR)/Debug.elf: $(BUILD_DIR)/main.o $(BUILD_DIR)/myprogramer.o $(BUILD_DIR)/mycc2541.o $(BUILD_DIR)/targetmcu.o mylib.a 
+$(BUILD_DIR)/Debug.elf: $(BUILD_DIR)/main.o $(BUILD_DIR)/myprogramer.o $(BUILD_DIR)/mycc2541.o $(BUILD_DIR)/myATmega328.o $(BUILD_DIR)/targetmcu.o mylib.a 
 	$(LD) $(LDFLAGS) -o $@ $(addprefix -l:,$(notdir $^)) -l:arduino.a -lm 
 	avr-objcopy -O ihex -R .eeprom "$(BUILD_DIR)/Debug.elf" "$(BUILD_DIR)/Debug.hex"
 	avr-objcopy -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 --no-change-warnings -O ihex "$(BUILD_DIR)/Debug.elf" "$(BUILD_DIR)/Debug.eep" || exit 0 
@@ -101,6 +102,9 @@ $(BUILD_DIR)/myprogramer.o: myProgramer.cpp
 	$(CC) $(CCFLAGS) -o $@ -c $<
 
 $(BUILD_DIR)/mycc2541.o: cc2541/mycc2541.c cc2541/mycc2541.h
+	$(CC) $(CFLAGS) -o $@ -c $<	
+
+$(BUILD_DIR)/myATmega328.o: atmega328/myATmega328.c atmega328/myATmega328.h
 	$(CC) $(CFLAGS) -o $@ -c $<	
 
 $(BUILD_DIR)/targetmcu.o: $(TARGET_MCU_FILE)

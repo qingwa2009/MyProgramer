@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "name": "AVR",
+            "includePath": [
+                "D:\\Program Files\\Arduino\\hardware\\tools\\avr\\avr\\include\\",
+                "D:\\Program Files\\Arduino\\hardware\\arduino\\avr\\",
+                "D:\\Program Files\\Arduino\\hardware\\arduino\\avr\\cores\\arduino",
+                "D:\\Program Files\\Arduino\\hardware\\arduino\\avr\\variants\\standard"
+            ],
+            "windowsSdkVersion": "10.0.18362.0",
+            "compilerPath": "D:\\Program Files\\Arduino\\hardware\\tools\\avr\\bin\\avr-gcc.exe",
+            "intelliSenseMode": "${default}",
+            "defines": [
+                "F_CPU=16000000L",
+                "ARDUINO_ARCH_AVR",
+                "UBRRH",
+                "__AVR_ATmega328P__",
+                "__cplusplus",
+                "ARDUINO=105",
+                "ARDUINO_AVR_UNO"
+            ],
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++11"
+        }
+    ],
+    "version": 4
+}

@@ -12,7 +12,7 @@ if (!fs.existsSync(hexFilePath)) {
     console.error("file no exists: ", hexFilePath);
     process.exit();
 }
-const isBin = hexFilePath.substr(hexFilePath.lastIndexOf("."), hexFilePath.length).toLowerCase() === ".bin";
+const fmt = hexFilePath.substr(hexFilePath.lastIndexOf("."), hexFilePath.length).toLowerCase();
 
 const fileBuf = fs.readFileSync(hexFilePath);
 // console.log(fileBuf);
@@ -38,11 +38,20 @@ com.addListener("drain", () => {
     console.log("drain");
 });
 
+const pps = { ".hex": "/p\r\n", ".bin": "/pb\r\n", ".eep": "/pe\r\n" };
+if (!pps[fmt]) {
+    console.error("File format must be .hex|.bin|.eep !");
+    process.exit();
+}
+
+const isBin = fmt === ".bin";
+
 const cmdList = [
     // "/h\r\n",
     "/d\r\n",/*死活烧不了的时候可以用串口调试助手执行/d /ch大多数情况就可以烧了 */
+    // "/ch\r\n",
     "/gi\r\n",
-    isBin ? "/pb\r\n" : "/p\r\n",
+    pps[fmt],
 ];
 
 let cmdInd = 0;
@@ -82,7 +91,7 @@ com.on("data", (data) => {
                     console.log("program failed!");
                     setTimeout(() => {
                         process.exit();
-                    }, 1000);
+                    }, 20);
                     return;
                 }
                 if (!isBin) {
@@ -139,7 +148,7 @@ com.on("data", (data) => {
                             console.log("program finish!");
                             setTimeout(() => {
                                 process.exit();
-                            }, 1000);
+                            }, 20);
                         }
                     }
                 }
