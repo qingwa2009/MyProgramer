@@ -630,7 +630,20 @@ uint8_t programingBin(uint32_t addr, uint8_t *buf)
     }
     return ERR_OK;
 }
+uint8_t programingBinEEPROM(uint32_t addr, uint8_t *buf)
+{
+    for (uint16_t i = 0; i < 512; i += SIZE_BYTES_PER_EEPROM_PAGE)
+    {
+        uint16_t addrProgram = addr;
+        if (!writeEEPROMMemPage(addrProgram, &buf[i]))
+            return ERR_PROGRAM_WRITE_TIMEOUT;
+        if (!checkEEPROMIsWriteCorrect(addrProgram, &buf[i]))
+            return ERR_PROGRAM_READ_BACK_UNMATCH;
 
+        addr += SIZE_BYTES_PER_EEPROM_PAGE;
+    }
+    return ERR_OK;
+}
 void afterProgram()
 {
     Serial.println(F("after program!"));

@@ -5,7 +5,8 @@
 #define MODE_CMD 0
 #define MODE_WRITING_PROGRAM_HEX 1
 #define MODE_WRITING_PROGRAM_BIN 2
-#define MODE_WRITING_EEPROM 3
+#define MODE_WRITING_EEPROM_HEX 3
+#define MODE_WRITING_EEPROM_BIN 4
 
 #define PROGRAM_HEX 0
 #define PROGRAM_BIN 1
@@ -67,12 +68,20 @@ void enterProgramMode(char *buf, uint8_t len)
     switch (buf[2])
     {
     case 'b':
-        mode = MODE_WRITING_PROGRAM_BIN;
-        Serial.println(F("program mode(BIN):"));
+        if (buf[3] != 'e')
+        {
+            mode = MODE_WRITING_PROGRAM_BIN;
+            Serial.println(F("program mode(BIN):"));
+        }
+        else
+        {
+            mode = MODE_WRITING_EEPROM_BIN;
+            Serial.println(F("program mode(EEPROM BIN):"));
+        }
         break;
     case 'e':
-        mode = MODE_WRITING_EEPROM;
-        Serial.println(F("program mode(EEPROM):"));
+        mode = MODE_WRITING_EEPROM_HEX;
+        Serial.println(F("program mode(EEPROM HEX):"));
         break;
     default:
         mode = MODE_WRITING_PROGRAM_HEX;
@@ -80,7 +89,7 @@ void enterProgramMode(char *buf, uint8_t len)
         break;
     }
 
-    bool mustEraseChip = mode != MODE_WRITING_EEPROM; /*烧eeprom不清空芯片*/
+    bool mustEraseChip = (mode != MODE_WRITING_EEPROM_HEX) && (mode != MODE_WRITING_EEPROM_BIN); /*烧eeprom不清空芯片*/
     if (!beforeProgram(mustEraseChip))
     {
         Serial.println(F("enter program mode failed!"));
@@ -329,14 +338,14 @@ void programBinFileMode()
             return;
         }
 
-        if (isAllFF) /*全0xFF就不写入*/
+        if (isAllFF && mode == MODE_WRITING_PROGRAM_BIN) /*全0xFF并且不是烧EEPROM就不写入*/
         {
             Serial.println("ok");
             RESP_END;
             continue;
         }
 
-        errCode = programingBin(addr, buf);
+        errCode = mode == MODE_WRITING_PROGRAM_BIN ? programingBin(addr, buf) : programingBinEEPROM(addr, buf);
         if (errCode == ERR_OK)
         {
             Serial.println("ok");
@@ -344,7 +353,6 @@ void programBinFileMode()
         }
         else
         {
-
             printErrMsg(errCode);
             enterCmdMode();
             return;
@@ -401,7 +409,7 @@ void myprogramer_start()
                     if (handlers[ind])
                     {
                         handlers[ind](buf, len); /*call cmd handler*/
-                        if (mode == MODE_WRITING_PROGRAM_BIN)
+                        if (mode == MODE_WRITING_PROGRAM_BIN || mode == MODE_WRITING_EEPROM_BIN)
                         {
                             RESP_END;
                             programBinFileMode();
@@ -413,7 +421,7 @@ void myprogramer_start()
                 }
                 break;
             case MODE_WRITING_PROGRAM_HEX:
-            case MODE_WRITING_EEPROM:
+            case MODE_WRITING_EEPROM_HEX:
                 _handleProgramHex(buf, len);
                 break;
             default:

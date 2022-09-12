@@ -700,7 +700,10 @@ uint8_t programingBin(uint32_t addr, uint8_t *buf)
     }
     return ERR_OK;
 }
-
+uint8_t programingBinEEPROM(uint32_t addr, uint8_t *buf)
+{
+    return ERR_PROGRAM_UNSUPPORTED;
+}
 void afterProgram()
 {
     Serial.println(F("after program!"));

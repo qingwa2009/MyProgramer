@@ -1,5 +1,15 @@
 # MyProgramer
-arduino uno(atmega328) CC2541蓝牙模块 编程器（可以烧hex跟bin文件）
+arduino uno(atmega328) programer 
+    
+    CC2541蓝牙模块 编程器
+        * .hex 文本格式烧写flash
+        * .bin 二进制格式烧写flash
+        
+    ATmega328 编程器
+        * .hex 文本格式烧写flash
+        * .bin 二进制格式烧写flash
+        * .eep 文本格式烧写eeprom
+        * .eepb 二进制格式烧写eeprom
 
 目录说明：
 
@@ -8,10 +18,13 @@ arduino uno(atmega328) CC2541蓝牙模块 编程器（可以烧hex跟bin文件�
         MAKE文件夹也是从proteus那里牛过来的(●ˇ∀ˇ●)，make路径要加到环境变量里面去。
 
     cc2541: 
-        芯片相关的乱七八糟都丢里面了，doc里面是芯片的一些数据手册，
+        cc2541芯片相关的乱七八糟都丢里面了，doc里面是芯片的一些数据手册，
         exampleHex里面blinkuTest是呼吸灯的程序，
         还有一个是从https://github.com/RedBearLab/CCLoader 牛过来的HM10蓝牙模块的bin文件，
         我找来找去都找不到哪些可以用的蓝牙模块文件。
+
+    atmega328:
+        atmega328芯片相关的乱七八糟都丢里面了。
 
     mylib: 
         自己写的一些库函数
@@ -32,6 +45,13 @@ arduino uno(atmega328) CC2541蓝牙模块 编程器（可以烧hex跟bin文件�
 
     上位机我用的nodejs+serialport，没有的需要安装下：
     装了nodejs后，在当前目录下cmd运行 npm install 就会自动安装serialport
+
+    Makefile里面下面两句分别对应编译cc2541跟atmega328编程器，注释掉其中一句就可以了。
+    # TARGET_MCU_FILE = mcu_cc2541.cpp
+    # TARGET_MCU_FILE = mcu_atmega328.cpp
+    也可以不用改，在命令行输入“make TARGET_MCU_FILE=xxxxx.cpp”这样直接指定编译哪个芯片也可以。
+    需要注意的是因为编译后输出的文件是一样的，所以切换到另一个时编译之前要先make clean
+
 
 
 CC2541接线：

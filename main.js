@@ -1,4 +1,12 @@
 'use strict';
+
+/**
+ * 适合烧录的文件后缀名称：
+ * .hex 文本格式烧写flash
+ * .bin 二进制格式烧写flash
+ * .eep 文本格式烧写eeprom
+ * .eepb 二进制格式烧写eeprom
+ */
 const { SerialPort } = require("serialport");
 const fs = require('fs');
 
@@ -38,13 +46,13 @@ com.addListener("drain", () => {
     console.log("drain");
 });
 
-const pps = { ".hex": "/p\r\n", ".bin": "/pb\r\n", ".eep": "/pe\r\n" };
+const pps = { ".hex": "/p\r\n", ".bin": "/pb\r\n", ".eep": "/pe\r\n", ".eepb": "/pbe\r\n" };
 if (!pps[fmt]) {
     console.error("File format must be .hex|.bin|.eep !");
     process.exit();
 }
 
-const isBin = fmt === ".bin";
+const isBin = fmt === ".bin" || fmt === ".eepb";
 
 const cmdList = [
     // "/h\r\n",
@@ -107,7 +115,7 @@ com.on("data", (data) => {
                         console.log("program finish!");
                         setTimeout(() => {
                             process.exit();
-                        }, 1000);
+                        }, 20);
                     }
                 } else {
                     if (!isBinFileSizeSended) {
