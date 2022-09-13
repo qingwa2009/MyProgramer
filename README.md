@@ -73,11 +73,13 @@ CC2541接线：
 
     1、接好线
 
-    2、cmd cd到当前目录 输入“make”编译
+    2、cmd cd到当前目录 输入“make clean”清空之前的编译（可选）
 
-    3、输入“make upload”上传
+    3、输入“make TARGET_MCU_FILE=mcu_cc2541.cpp”编译
 
-    4、输入“node main .\cc2541\exampleHex\blinkTest.hex” 给cc2541烧录blinkTest.hex(支持hex跟bin文件)
+    4、输入“make upload”上传
+
+    5、输入“node main .\cc2541\exampleHex\blinkTest.hex” 给cc2541烧录blinkTest.hex(支持hex跟bin文件)
 
 我稀里糊涂的的把cc2541的调试功能都给写了：
 
@@ -120,12 +122,38 @@ CC2541接线：
 
 atmega328接线:
 
-    ...
+    参见atmega328文件夹里面的接线图。
+
+    其中晶振我是没按数据手册那样接电容电阻的，接上反而有问题，有点谜。UNO的2号接芯片的1脚；3号是编程模式会输出8M的pwm信号，退出编程模式则会关闭pwm信号输出，用来给芯片提供外置时钟，防止时钟熔丝设置错误导致芯片无法编程；uno的11，12，13就是spi的接线接芯片对应的引脚就行；芯片的电源跟地就跟uno的电源地接一起就可以了。
 
 烧录atmega328：
 
-    ...
+    1、接好线
 
+    2、cmd cd到当前目录 输入“make clean”清空之前的编译（可选）
 
+    3、输入“make TARGET_MCU_FILE=mcu_atmega328.cpp”编译
+
+    4、输入“make upload”上传到uno
+
+    5、输入“node main x\xxxx\xxxx.hex” 给atmega328烧录程序(支持hex跟bin文件，也可以烧录.eep（跟hex一样）到eeprom或者.eepb（跟bin一样）到eeprom)，烧录eeprom不会清空flash，烧录flash根据熔丝位芯片会自动清空或者保留eeprom（详细见数据手册Fuse High Byte for ATmega328P）
+
+设置atmega328熔丝位：
+
+    用串口调试助手，波特率设置250000，输入“/h”以回车换行(\r\n)结尾
+    可以看到详细的使用说明，大概详细吧-_-!!! 如：
+
+    /d 进入调试模式，mcu暂停，pc计数器指到0
+
+    /r 退出调试模式，mcu正常运行
+
+    /q 是开启或者关闭arduino串口输出，这样上位机可以直接跟atmega328串口通信
+
+    /sfl xx 设置低熔丝位，时钟源相关的就是在这里
+    
+    ....
+
+演示：
+    https://www.bilibili.com/video/BV1me4y1C7f6
 
 
