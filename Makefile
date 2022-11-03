@@ -23,6 +23,7 @@ TARGET = Debug
 SHELL = C:\Windows\system32\cmd.exe
 BUILD_DIR = debug
 
+
 BOARD = pro328
 MCU = ATmega328P
 MMCU = atmega328p
@@ -70,18 +71,15 @@ ASM=avr-gcc
 LD=avr-gcc
 
 
-# .PHONY: test
-# test:
-# 	@echo $(SRCS)
-# 	@echo $(OBJS)
-	
+UPLOAD_FILE = $(BUILD_DIR)/Debug.hex
+
 # Build tree:
 all:	Debug
 
 .PHONY: upload
 upload: 
 	avrdude -C$(AVRDUDE_CONF_PATH) -v \
-	-p$(MCU) -c$(UPLOAD_PROGRAMER) -P$(UPLOAD_PORT) -b$(UPLOAD_BAUD) -D -Uflash:w:$(BUILD_DIR)/Debug.hex:i
+	-p$(MCU) -c$(UPLOAD_PROGRAMER) -P$(UPLOAD_PORT) -b$(UPLOAD_BAUD) -D -Uflash:w:$(UPLOAD_FILE):i
 
 Debug: $(BUILD_DIR)/Debug.elf 
 	avr-size "$(BUILD_DIR)/Debug.ELF"

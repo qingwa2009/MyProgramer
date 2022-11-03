@@ -76,6 +76,7 @@ void printDebugConfig(const struct debugConfig *config)
 
 void handleHelp()
 {
+    Serial.println(F(">>>>>>>cc2541 Programer<<<<<<<"));
     Serial.println(F("/d      enter debug mode"));
     Serial.println(F("/r      exit debug mode"));
     Serial.println(F("/gi     get chip id and version"));

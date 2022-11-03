@@ -29,6 +29,14 @@ arduino uno(atmega328) programer
     mylib: 
         自己写的一些库函数
 
+    preBuild:
+        已经编译好了的atmega328跟cc2541的编程器hex文件，直接用就可以了不用自己再编译一遍了：
+        命令行直接输入：
+        make upload UPLOAD_FILE=prebuild/cc2541.hex
+        或者
+        make upload UPLOAD_FILE=prebuild/atmega328.hex
+        就可以将UNO烧录成对应的编程器了。
+
 编译环境搭建：
 
     我用的vscode编写代码，然后用proteus里面的make工具编译代码（好像是i386-pc-mingw32版本的）

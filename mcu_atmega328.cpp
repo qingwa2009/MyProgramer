@@ -6,6 +6,7 @@
 
 void handleHelp()
 {
+    Serial.println(F(">>>>>>>atmega328 Programer<<<<<<<"));
     Serial.println(F("/d      enter debug mode"));
     Serial.println(F("/r      exit debug mode"));
     Serial.println(F("/gfh     get fuse high bits"));
