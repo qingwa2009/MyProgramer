@@ -2,7 +2,11 @@
 #define __MY_ATMEGA328_H
 #include <Arduino.h>
 
+#ifdef ATMEGA8A
+#define SIZE_BYTES_PER_PAGE 64
+#else
 #define SIZE_BYTES_PER_PAGE 128
+#endif
 #define SIZE_WORDS_PER_PAGE (SIZE_BYTES_PER_PAGE / 2)
 #define SIZE_BYTES_PER_EEPROM_PAGE 4
 

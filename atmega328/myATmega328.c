@@ -66,12 +66,16 @@ bool isFlashBusy()
 
 bool waitForBusy()
 {
+#ifdef ATMEGA8A
+    return 1;
+#else
     for (uint16_t i = 0; i < 1024; i++)
     {
         if (!isFlashBusy()) /*好像每什么效果*/
             return 1;
     }
     return 0;
+#endif
 }
 
 /*

@@ -6,6 +6,8 @@
 #实现了cc2541跟atmega328的编程功能
 # TARGET_MCU_FILE = mcu_cc2541.cpp
 TARGET_MCU_FILE = mcu_atmega328.cpp
+#ATMEGA8A
+ATMEGA8A = _
 
 #必要的路径，必须短路径名，不然有空格会出错
 ARDUINO_PATH = "D:\PROGRA~1\Arduino"
@@ -103,10 +105,10 @@ $(BUILD_DIR)/mycc2541.o: cc2541/mycc2541.c cc2541/mycc2541.h
 	$(CC) $(CFLAGS) -o $@ -c $<	
 
 $(BUILD_DIR)/myATmega328.o: atmega328/myATmega328.c atmega328/myATmega328.h
-	$(CC) $(CFLAGS) -o $@ -c $<	
+	$(CC) $(CFLAGS) -D$(ATMEGA8A) -o $@ -c $<	
 
 $(BUILD_DIR)/targetmcu.o: $(TARGET_MCU_FILE)
-	$(CC) $(CCFLAGS) -o $@ -c $<	
+	$(CC) $(CCFLAGS) -D$(ATMEGA8A) -o $@ -c $<	
 
 $(BUILD_DIR)/main.cpp:	main.ino 
 	-mkdir "$(BUILD_DIR)"

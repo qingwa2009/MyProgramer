@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node main.js \"D:/documents/proteus/Arduino 328/Arduino328/USB电流检测/bin/Debug.hex\""
   },
   "author": "",
   "license": "ISC",
