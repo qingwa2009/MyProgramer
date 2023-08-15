@@ -115,6 +115,21 @@ CC2541接线：
     需要注意的是cc2541有个debug lock bit，就是防止别人调试，要是被设置了就备份不了了，备份不了时会提示的！
     debug lock bit只能通过清空flash来清除。
 
+关于蓝牙模块烧录TI官方的示例程序：
+
+    由于蓝牙模块的硬件跟示例程序的配置可能不一致，导致烧录进去无法正常运行。比较典型的情况就是：有些蓝牙模块《没焊外部32k晶振》-_-!!!，而示例程序应该全是默认存在在外部32k晶振编译的程序，所以导致程序运行不下去。
+    下面提供一些我用到的预编译宏，直接加到IAR->工程设置->c/c++ Compiler->Preprocessor->Defined symbols的框里面，注释不要写进去，跟已有的有冲突的话就删掉已有的：
+    HAL_KEY=FALSE             
+    HAL_LED=TRUE               
+    HAL_LCD=FALSE              
+    HAL_AES_DMA=TRUE            
+    HAL_DMA=TRUE                			
+    HAL_UART_ISR=0              
+    HAL_UART=TRUE               
+    HAL_UART_DMA=2			//使用port1的串口
+    NPI_UART_FC=FALSE		//关闭串口流控制
+    XOSC32K_INSTALLED=FALSE	//使用内部32k晶振
+
 关于串口波特率：
 
     我设的是250000，用115200时运行备份程序老是备份不了，少好多个字节，
